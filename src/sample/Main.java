@@ -1,23 +1,14 @@
 package sample;
 
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.SepiaTone;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import javax.swing.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class Main extends Application {
@@ -40,10 +31,18 @@ public class Main extends Application {
         ProgressIndicator progressIndicator = new ProgressIndicator(0); // круг
         Slider slider = new Slider(0,100,0); // наш ползунок
 
+        // всплвыющая подсказка
+        AtomicReference<Double> myProgress = new AtomicReference<>(0.0); // атомарная переменная, для числа
+        Tooltip tooltip = new Tooltip(); // создание самой подсказки
+        slider.setTooltip(tooltip); // где будем подсказывать, при наведении куда?
+        progressBar.setTooltip(tooltip);
+
         // действие на ползунке
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             progressBar.setProgress(newValue.doubleValue()/100); // изменяем прогресс
             progressIndicator.setProgress(newValue.doubleValue()/100);
+            myProgress.set(progressIndicator.getProgress());  // наша атомарная переменная
+            tooltip.setText((myProgress)+"");                   // которую мы закидываем в подсказку
         });
 
         // расположение на форме
